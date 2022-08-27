@@ -25,29 +25,27 @@ querySnapshot.forEach((doc) => {
 
     var currentDate = new Date();
     var oldDate = new Date(doc.data().checkIn);
-    // var checkOut = new Date(doc.data().checkOut);
+
     var checkOut = new Date(doc.data().checkOut);
-    var timeAfter = Math.floor(getDifferenceInDays(checkOut, currentDate));
+    var timeAfter = getDifference(checkOut, currentDate);
 
 
-    var timeAgo = Math.floor(getDifferenceInMinutes(currentDate, oldDate));
-    function getDifferenceInMinutes(date1, date2) {
+    var timeAgo = getDifference(currentDate, oldDate);
+    function getDifference(date1, date2) {
         const diffInMs = Math.abs(date2 - date1);
-        return diffInMs / (1000 * 60);
-    }
-    function getDifferenceInDays(date1, date2) {
-        const diffInMs = Math.abs(date2 - date1);
-        return diffInMs / (1000 * 60 * 60 * 24);
+        if ((diffInMs / (1000 * 60 * 60)) > 24) return `${Math.floor(diffInMs / (1000 * 60 * 60 * 24))} days`;
+        else if ((diffInMs / (1000 * 60)) > 60) return `${Math.floor(diffInMs / (1000 * 60 * 60))} hrs`;
+        else if ((diffInMs / (1000)) > 60) return `${Math.floor(diffInMs / (1000 * 60))} mins`;
+        else return `${Math.floor(diffInMs / (1000))} sec`
     }
 
 
-    // afterTime = timeSince(new Date(dateTimeInSeconds - doc.data().current.nanoseconds / 1000));
     const child = document.createElement("tr");
     child.innerHTML = `<td>${doc.data().room}</td>
         <td>${doc.data().name}</td>
         <td>${doc.data().checkIn}</td>
-        <td>${timeAgo} mins ago</td>
+        <td>${timeAgo} ago</td>
         <td>${doc.data().checkOut}</td>
-        <td>After ${timeAfter} days</td>`;
+        <td>After ${timeAfter}</td>`;
     document.getElementById("table").append(child)
 });
